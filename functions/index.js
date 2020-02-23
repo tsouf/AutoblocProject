@@ -33,6 +33,8 @@ app.post('/api/create',(req, res)=>{
         })
         return res.status(200).send();
         }
+
+        
         catch(error){
             console.log(error);
             return res.status(500).send(error);
@@ -141,7 +143,7 @@ app.delete('/api/delete/:id',(req, res)=>{
 });
 
 //Create a Motorbike
-app.post('/api/create',(req, res)=>{
+app.post('/api/createBike',(req, res)=>{
     (async ()=>{
 
         try{
@@ -150,8 +152,6 @@ app.post('/api/create',(req, res)=>{
             Brand:req.body.Brand,
             Model:req.body.Model,
             Class:req.body.Class,
-            Year:req.body.Year,
-            CompressionRatio:req.body.CompressionRatio,
             TopSpeed:req.body.TopSpeed,
             Price:req.body.Price
         })
@@ -165,6 +165,64 @@ app.post('/api/create',(req, res)=>{
     })();
 });
 
+
+//Get All MotorBikes
+app.get('/api/readBike',(req, res)=>{
+    (async ()=>{
+
+        try{
+            
+           let query = db.collection('MotorBikes');
+           let response = [];
+
+           await query.get().then(querySnapshot => {
+               let docs = querySnapshot.docs;
+
+               for (let doc of docs){
+                   const selectedItem = {
+                       Brand: doc.data().Brand,
+                       Model: doc.data().Model,
+                       TopSpeed: doc.data().TopSpeed
+                   };
+                   response.push(selectedItem);
+               }
+               return response;
+               
+           })
+           return res.status(200).send(response);
+        }
+        catch(error){
+            console.log(error);
+            return res.status(500).send(error);
+        }
+        
+    })();
+});
+
+//Update a MotorBike
+app.put('/api/updateBike/:id',(req, res)=>{
+    (async ()=>{
+
+        try{
+        const document = db.collection('MotorBikes').doc(req.params.id);
+            
+        await document.update({
+            Brand:req.body.Brand,
+            Model:req.body.Model,
+            Class:req.body.Class,
+            TopSpeed:req.body.TopSpeed,
+            Price:req.body.Price
+        });
+
+        return res.status(200).send();
+        }
+        catch(error){
+            console.log(error);
+            return res.status(500).send(error);
+        }
+        
+    })();
+});
 
 //Export the api to Firebase Cloud Functions
 exports.app = functions.https.onRequest(app);
