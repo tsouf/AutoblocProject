@@ -16,7 +16,7 @@ const cors = require('cors');
 app.use(cors({origin:true}));
 
 
-//Create a vehicle
+//Create a car
 app.post('/api/create',(req, res)=>{
     (async ()=>{
 
@@ -139,6 +139,32 @@ app.delete('/api/delete/:id',(req, res)=>{
         
     })();
 });
+
+//Create a Motorbike
+app.post('/api/create',(req, res)=>{
+    (async ()=>{
+
+        try{
+        await db.collection('MotorBikes').doc('/' + req.body.id + '/' )
+        .create({
+            Brand:req.body.Brand,
+            Model:req.body.Model,
+            Class:req.body.Class,
+            Year:req.body.Year,
+            CompressionRatio:req.body.CompressionRatio,
+            TopSpeed:req.body.TopSpeed,
+            Price:req.body.Price
+        })
+        return res.status(200).send();
+        }
+        catch(error){
+            console.log(error);
+            return res.status(500).send(error);
+        }
+        
+    })();
+});
+
 
 //Export the api to Firebase Cloud Functions
 exports.app = functions.https.onRequest(app);
